@@ -1,0 +1,23 @@
+<div class="container">
+
+  <div class="title">
+    <div>Hack The Slovko!</div>
+  </div>
+
+  <div class="main">
+    <div class="try-container" *ngFor="let try of tries; let i = index">
+      <div class="letter-container" *ngFor="let letter of try.letters let j = index"
+           id="{{ i.toString() + j.toString()}}"
+           [class.match]="letter.state === LetterState.FULL_MATCH"
+           [class.partial]="letter.state === LetterState.PARTIAL_MATCH"
+           [class.wrong]="letter.state === LetterState.WRONG"
+           [class.has-text]="letter.text !== ''"
+            (click)="onLetterClick($event)">
+        {{letter.text}}
+      </div>
+      <button type="submit" (click)="submitTry()">ok</button>
+    </div>
+  </div>
+
+
+</div>
