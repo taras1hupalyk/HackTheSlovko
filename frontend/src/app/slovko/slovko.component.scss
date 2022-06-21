@@ -16,6 +16,11 @@
   border-bottom: 1px solid #ddd;
 }
 
+.some{
+  display: flex;
+  flex-direction: row;
+
+}
 .main{
   flex-grow: 1;
   margin-top: 12px;
