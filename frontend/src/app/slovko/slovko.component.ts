@@ -1,5 +1,7 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {SlovkoService} from "../slovko.service";
+import {HttpClient} from "@angular/common/http";
+import {WordInterface} from "../types/word.interface";
 
 const WORD_LENGTH = 5;
 const NUM_TRIES = 6;
@@ -40,16 +42,16 @@ enum LetterState {
   styleUrls: ['./slovko.component.scss']
 })
 export class SlovkoComponent implements OnInit {
-
-  private mostCommonWords = []
-
+  isDataLoaded :boolean = false;
+  words : WordInterface[] = []
   readonly tries: Try[] =[];
 
   private currentLetterIndex = 0;
   private numSubmittedTries = 0;
   readonly LetterState = LetterState;
+ // words =['some', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик'];
 
-  constructor( private slovkoService : SlovkoService) {
+  constructor( private http : HttpClient) {
     for (let i = 0; i < NUM_TRIES; i++){
       const letters: Letter[]=[]
       for (let j = 0; j < WORD_LENGTH; j++){
@@ -58,7 +60,8 @@ export class SlovkoComponent implements OnInit {
       this.tries.push({letters})
     }
 
-   // this.slovkoService.getMostCommon().subscribe((data:any) => this.mostCommonWords = data);
+
+
   }
 
   getSome() {
@@ -66,6 +69,14 @@ export class SlovkoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.http.get<WordInterface[]>("http://localhost:5000/api/words/five-letters")
+      .subscribe((data : WordInterface[]) => {
+        console.log('res', data)
+        this.words = data
+        this.isDataLoaded =true;
+      });
+
+    console.log('in on init' , this.words);
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -121,5 +132,14 @@ export class SlovkoComponent implements OnInit {
     this.tries[chosenNumTry].letters[chosenNumLetter].state = changeLetterState(this.tries[chosenNumTry].letters[chosenNumLetter].state);
     console.log(this.tries[chosenNumTry].letters[chosenNumLetter].state)
     console.log(this.tries)
+  }
+
+  printChosenWord(chosenWord: WordInterface) {
+    console.log('chosen word is ' + chosenWord);
+    for(let i = 0; i < chosenWord.value.length; i++){
+      console.log(chosenWord.value[i])
+      this.setLetter(chosenWord.value[i]);
+      this.currentLetterIndex++;
+    }
   }
 }
