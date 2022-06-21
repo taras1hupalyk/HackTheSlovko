@@ -1,7 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 import json
 
@@ -20,7 +16,8 @@ rest_api.init_app(app)
 CORS(app)
 
 # Setup database
-@app.before_first_request
+
+
 def initialize_database():
     db.create_all()
 

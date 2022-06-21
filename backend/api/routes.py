@@ -3,12 +3,12 @@ from datetime import datetime, timezone, timedelta
 
 from functools import wraps
 
-from flask import request
+from flask import request, jsonify
 from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import db, Users, JWTTokenBlocklist
+from .models import db, Users, JWTTokenBlocklist, VocUTF
 from .config import BaseConfig
 
 rest_api = Api(version="1.0", title="Users API")
@@ -33,45 +33,6 @@ user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(requi
                                                    })
 
 
-"""
-   Helper function for JWT token required
-"""
-
-def token_required(f):
-
-    @wraps(f)
-    def decorator(*args, **kwargs):
-
-        token = None
-
-        if "authorization" in request.headers:
-            token = request.headers["authorization"]
-
-        if not token:
-            return {"success": False, "msg": "Valid JWT token is missing"}, 400
-
-        try:
-            data = jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
-            current_user = Users.get_by_email(data["email"])
-
-            if not current_user:
-                return {"success": False,
-                        "msg": "Sorry. Wrong auth token. This user does not exist."}, 400
-
-            token_expired = db.session.query(JWTTokenBlocklist.id).filter_by(jwt_token=token).scalar()
-
-            if token_expired is not None:
-                return {"success": False, "msg": "Token revoked."}, 400
-
-            if not current_user.check_jwt_auth_active():
-                return {"success": False, "msg": "Token expired."}, 400
-
-        except:
-            return {"success": False, "msg": "Token is invalid"}, 400
-
-        return f(current_user, *args, **kwargs)
-
-    return decorator
 
 
 """
@@ -151,7 +112,6 @@ class EditUser(Resource):
     """
 
     @rest_api.expect(user_edit_model)
-    @token_required
     def post(self, current_user):
 
         req_data = request.get_json()
@@ -170,21 +130,11 @@ class EditUser(Resource):
         return {"success": True}, 200
 
 
-@rest_api.route('/api/users/logout')
-class LogoutUser(Resource):
-    """
-       Logs out User using 'logout_model' input
-    """
 
-    @token_required
-    def post(self, current_user):
 
-        _jwt_token = request.headers["authorization"]
+@rest_api.route('/api/words/five-letters')
+class GetFiveLetters(Resource):
 
-        jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
-        jwt_block.save()
-
-        self.set_jwt_auth_active(False)
-        self.save()
-
-        return {"success": True}, 200
+    def get(self):
+        words = VocUTF.get_all_five_letter_words()
+        return jsonify(words)

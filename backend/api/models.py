@@ -75,3 +75,25 @@ class JWTTokenBlocklist(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+class VocUTF(db.Model):
+    Id = db.Column(db.Integer(), primary_key=True)
+    Word = db.Column(db.String(), nullable=False)
+
+    @classmethod
+    def get_all_five_letter_words(cls):
+        data = []
+        rows = db.session.execute("SELECT * FROM VocUTF WHERE LENGTH(Word) = 5").fetchall()
+        for row in rows:
+            data.append({'id': row[0],
+                         'value': row[1]})
+        return data
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+
+
