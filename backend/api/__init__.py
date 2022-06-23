@@ -21,6 +21,7 @@ CORS(app)
 def initialize_database():
     db.create_all()
 
+
 """
    Custom responses
 """
