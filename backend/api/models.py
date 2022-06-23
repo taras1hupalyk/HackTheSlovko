@@ -2,6 +2,7 @@
 from datetime import datetime
 
 import json
+import re
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -77,6 +78,30 @@ class JWTTokenBlocklist(db.Model):
         db.session.commit()
 
 
+def generate_filter(letters_states):
+    regex_pattern = ['[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]', '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]',
+                     '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]', '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]',
+                     '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]']
+    letters_must_contain = []
+
+    def remove_letter(letter_to_remove, index):
+        new_regex = regex_pattern[index].replace(letter_to_remove, "")
+        regex_pattern[index] = new_regex
+
+    for one_try in letters_states:
+        for i in range(len(one_try["letters"])):
+            if one_try["letters"][i]["state"] == 0:
+                for x in range(len(regex_pattern)):
+                    remove_letter(one_try["letters"][i]["text"], x)
+            elif one_try["letters"][i]["state"] == 1:
+                letters_must_contain.append(one_try["letters"][i]["text"])
+                remove_letter(one_try["letters"][i]["text"], i)
+            elif one_try["letters"][i]["state"] == 2:
+                letters_must_contain.append(one_try["letters"][i]["text"])
+                regex_pattern[i] = one_try["letters"][i]["text"]
+    return regex_pattern, letters_must_contain
+
+
 class VocUTF(db.Model):
     Id = db.Column(db.Integer(), primary_key=True)
     Word = db.Column(db.String(), nullable=False)
@@ -89,6 +114,31 @@ class VocUTF(db.Model):
             data.append({'id': row[0],
                          'value': row[1]})
         return data
+
+    @classmethod
+    def get_filtered_words(cls, letters_states):
+        words = cls.get_all_five_letter_words()
+        words_filter = generate_filter(letters_states)
+
+        rg_pattern = ''
+        for char_pattern in words_filter[0]:
+            rg_pattern += char_pattern
+
+        letters_must_contain = words_filter[1]
+        result = []
+        for word in words:
+            if all(x in word["value"] for x in letters_must_contain):
+                if re.search(rg_pattern, word["value"]):
+                    result.append(word)
+
+        return result
+
+
+
+
+
+
+
 
     def save(self):
         db.session.add(self)

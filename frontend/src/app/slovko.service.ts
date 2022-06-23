@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {WordInterface} from "./types/word.interface";
+import {Try} from "./slovko/slovko.component";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +25,9 @@ export class SlovkoService {
 
 
     return this.data;
+  }
+
+  SendFilter(requestBody: Try[]) : Observable<WordInterface[]> {
+    return this.http.post<WordInterface[]>("http://localhost:5000/api/words/filtered", requestBody);
   }
 }

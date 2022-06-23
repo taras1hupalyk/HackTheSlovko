@@ -1,4 +1,3 @@
-
 from datetime import datetime, timezone, timedelta
 
 from functools import wraps
@@ -12,7 +11,6 @@ from .models import db, Users, JWTTokenBlocklist, VocUTF
 from .config import BaseConfig
 
 rest_api = Api(version="1.0", title="Users API")
-
 
 """
     Flask-Restx models for api request and response data
@@ -28,11 +26,11 @@ login_model = rest_api.model('LoginModel', {"email": fields.String(required=True
                                             })
 
 user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(required=True, min_length=1, max_length=32),
-                                                   "username": fields.String(required=True, min_length=2, max_length=32),
+                                                   "username": fields.String(required=True, min_length=2,
+                                                                             max_length=32),
                                                    "email": fields.String(required=True, min_length=4, max_length=64)
                                                    })
-
-
+# letters_states_model = rest_api.model('LettersStatesModel', [{"letters": fields.List}])
 
 
 """
@@ -48,7 +46,6 @@ class Register(Resource):
 
     @rest_api.expect(signup_model, validate=True)
     def post(self):
-
         req_data = request.get_json()
 
         _username = req_data.get("username")
@@ -130,11 +127,18 @@ class EditUser(Resource):
         return {"success": True}, 200
 
 
-
-
-@rest_api.route('/api/words/five-letters')
-class GetFiveLetters(Resource):
+@rest_api.route('/api/words')
+class Words(Resource):
 
     def get(self):
         words = VocUTF.get_all_five_letter_words()
         return jsonify(words)
+
+
+@rest_api.route('/api/words/filtered')
+class FilteredWords(Resource):
+
+    def post(self):
+        some = request.get_json()
+        result = VocUTF.get_filtered_words(some)
+        return jsonify(result)

@@ -19,12 +19,12 @@ const LETTERS = (() => {
 
 
 
-interface Letter {
+export interface Letter {
   text: string;
   state: LetterState;
 }
 
-interface Try {
+export interface Try {
   letters: Letter[];
 
 }
@@ -51,7 +51,7 @@ export class SlovkoComponent implements OnInit {
   readonly LetterState = LetterState;
  // words =['some', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик'];
 
-  constructor( private http : HttpClient) {
+  constructor( private http : HttpClient, private  slovkoService: SlovkoService) {
     for (let i = 0; i < NUM_TRIES; i++){
       const letters: Letter[]=[]
       for (let j = 0; j < WORD_LENGTH; j++){
@@ -69,7 +69,7 @@ export class SlovkoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get<WordInterface[]>("http://localhost:5000/api/words/five-letters")
+    this.http.get<WordInterface[]>("http://localhost:5000/api/words")
       .subscribe((data : WordInterface[]) => {
         console.log('res', data)
         this.words = data
@@ -113,6 +113,18 @@ export class SlovkoComponent implements OnInit {
       this.numSubmittedTries++;
     }
     console.log(this.numSubmittedTries );
+    let requestBody: Try[] = []
+    for(let i = 0; i < this.numSubmittedTries; i++){
+      requestBody.push(this.tries[i]);
+    }
+
+    let some : [] = []
+     this.slovkoService.SendFilter(requestBody).subscribe((response) =>{
+       console.log('response', response);
+       this.words = response;
+     });
+    console.log('some', some);
+
   }
 
   onLetterClick(event : any) {
