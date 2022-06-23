@@ -1,0 +1,12 @@
+<p>wordlist works!</p>
+
+<div *ngIf="words.length !==0">
+  <ul class="words">
+    <li *ngFor="let word of words; let i = index">
+      <button (click)="onWordChosen(word)">
+        <span class="badge">{{i+1}}</span>
+        <span class="word">{{word.value}}</span>
+      </button>
+    </li>
+  </ul>
+</div>
