@@ -1,6 +1,6 @@
 
 from datetime import datetime
-
+from sqlalchemy.sql import text
 import json
 import re
 
@@ -109,7 +109,7 @@ class VocUTF(db.Model):
     @classmethod
     def get_all_five_letter_words(cls):
         data = []
-        rows = db.session.execute("SELECT * FROM VocUTF WHERE LENGTH(Word) = 5").fetchall()
+        rows = db.session.execute(text("SELECT * FROM VocUTF WHERE LENGTH(Word) = 5")).fetchall()
         for row in rows:
             data.append({'id': row[0],
                          'value': row[1]})
