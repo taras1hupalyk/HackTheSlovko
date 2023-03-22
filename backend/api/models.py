@@ -1,6 +1,6 @@
 
 from datetime import datetime
-
+from sqlalchemy.sql import text
 import json
 import re
 
@@ -79,6 +79,10 @@ class JWTTokenBlocklist(db.Model):
 
 
 def generate_filter(letters_states):
+    WRONG = 0
+    PARTIAL_MATCH = 1
+    FULL_MATCH = 2
+    PENDING = 3
     regex_pattern = ['[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]', '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]',
                      '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]', '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]',
                      '[абвгґдеєжзиіїйклмнопрстуфхцчшщьюя]']
@@ -90,13 +94,14 @@ def generate_filter(letters_states):
 
     for one_try in letters_states:
         for i in range(len(one_try["letters"])):
-            if one_try["letters"][i]["state"] == 0:
-                for x in range(len(regex_pattern)):
-                    remove_letter(one_try["letters"][i]["text"], x)
-            elif one_try["letters"][i]["state"] == 1:
+            if one_try["letters"][i]["state"] == WRONG:
+                if one_try["letters"][i]["text"] not in letters_must_contain:
+                    for x in range(len(regex_pattern)):
+                        remove_letter(one_try["letters"][i]["text"], x)
+            elif one_try["letters"][i]["state"] == PARTIAL_MATCH:
                 letters_must_contain.append(one_try["letters"][i]["text"])
                 remove_letter(one_try["letters"][i]["text"], i)
-            elif one_try["letters"][i]["state"] == 2:
+            elif one_try["letters"][i]["state"] == FULL_MATCH:
                 letters_must_contain.append(one_try["letters"][i]["text"])
                 regex_pattern[i] = one_try["letters"][i]["text"]
     return regex_pattern, letters_must_contain
@@ -109,7 +114,7 @@ class VocUTF(db.Model):
     @classmethod
     def get_all_five_letter_words(cls):
         data = []
-        rows = db.session.execute("SELECT * FROM VocUTF WHERE LENGTH(Word) = 5").fetchall()
+        rows = db.session.execute(text("SELECT * FROM VocUTF WHERE LENGTH(Word) = 5")).fetchall()
         for row in rows:
             data.append({'id': row[0],
                          'value': row[1]})
