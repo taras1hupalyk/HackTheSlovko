@@ -7,7 +7,6 @@ import {WordInterface} from "../types/word.interface";
   styleUrls: ['./wordlist.component.scss']
 })
 export class WordlistComponent implements OnInit {
-  //words: string[] = ['some', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик'];
 
   @Input() words : WordInterface[] = [];
 
