@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {WordInterface} from "./types/word.interface";
 import {Try} from "./slovko/slovko.component";
 import {Observable} from "rxjs";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SlovkoService {
 
+  baseUrl = environment.baseUrl;
   data: WordInterface[] = [];
   constructor(
     private  http: HttpClient
@@ -17,7 +19,7 @@ export class SlovkoService {
 
 
   getFiveLettersWords(){
-    this.http.get<WordInterface[]>("http://localhost:5000/api/words/five-letters")
+    this.http.get<WordInterface[]>("${this.baseUrl}/words/five-letters")
       .subscribe((data : WordInterface[]) => {
         console.log('res', data)
       this.data = data});
@@ -28,6 +30,6 @@ export class SlovkoService {
   }
 
   SendFilter(requestBody: Try[]) : Observable<WordInterface[]> {
-    return this.http.post<WordInterface[]>("http://localhost:5000/api/words/filtered", requestBody);
+    return this.http.post<WordInterface[]>(`${this.baseUrl}/words/filtered`, requestBody);
   }
 }

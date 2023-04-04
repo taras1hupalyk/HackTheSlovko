@@ -2,6 +2,7 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {SlovkoService} from "../slovko.service";
 import {HttpClient} from "@angular/common/http";
 import {WordInterface} from "../types/word.interface";
+import { environment } from 'src/environments/environment';
 
 const WORD_LENGTH = 5;
 const NUM_TRIES = 6;
@@ -42,6 +43,7 @@ enum LetterState {
   styleUrls: ['./slovko.component.scss']
 })
 export class SlovkoComponent implements OnInit {
+  baseUrl = environment.baseUrl;
   isDataLoaded :boolean = false;
   words : WordInterface[] = []
   readonly tries: Try[] =[];
@@ -49,7 +51,6 @@ export class SlovkoComponent implements OnInit {
   private currentLetterIndex = 0;
   private numSubmittedTries = 0;
   readonly LetterState = LetterState;
- // words =['some', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик', 'вульва', 'піцик'];
 
   constructor( private http : HttpClient, private  slovkoService: SlovkoService) {
     for (let i = 0; i < NUM_TRIES; i++){
@@ -69,7 +70,7 @@ export class SlovkoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get<WordInterface[]>("http://localhost:5000/api/words")
+    this.http.get<WordInterface[]>(`${this.baseUrl}/words`)
       .subscribe((data : WordInterface[]) => {
         console.log('res', data)
         this.words = data
@@ -108,6 +109,8 @@ export class SlovkoComponent implements OnInit {
   }
 
   submitTry() {
+    this.words = [];
+    this.isDataLoaded = false;
 
     if(this.numSubmittedTries < NUM_TRIES - 1) {
       this.numSubmittedTries++;
@@ -118,12 +121,10 @@ export class SlovkoComponent implements OnInit {
       requestBody.push(this.tries[i]);
     }
 
-    let some : [] = []
      this.slovkoService.SendFilter(requestBody).subscribe((response) =>{
-       console.log('response', response);
        this.words = response;
+      this.isDataLoaded = true;
      });
-    console.log('some', some);
 
   }
 
