@@ -1,0 +1,3 @@
+[submodule "Slovko.NL.Api"]
+	path = Slovko.NL.Api
+	url = https://github.com/taras1hupalyk/Slovko.NL.Api.git
