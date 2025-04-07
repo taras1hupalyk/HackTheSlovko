@@ -38,9 +38,10 @@ enum LetterState {
 }
 
 @Component({
-  selector: 'app-slovko',
-  templateUrl: './slovko.component.html',
-  styleUrls: ['./slovko.component.scss']
+    selector: 'app-slovko',
+    templateUrl: './slovko.component.html',
+    styleUrls: ['./slovko.component.scss'],
+    standalone: false
 })
 export class SlovkoComponent implements OnInit {
   baseUrl = environment.baseUrl;
