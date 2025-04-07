@@ -5,10 +5,15 @@
     <div>Hack The Slovko!</div>
   </div>
 
+
   <div class="some">
-    <div class="wordlist">
-    <app-wordlist *ngIf="isDataLoaded" [words]="words"  (chosen)="printChosenWord($event)"  ></app-wordlist>
+    <div class="wordlist" style="border-color: black; border-width: 1px;">
+      <app-wordlist *ngIf="isDataLoaded; else loading_spinner" [words]="words"  (chosen)="printChosenWord($event)"  ></app-wordlist>
     </div>
+    <ng-template #loading_spinner>
+      <app-loading-spinner ></app-loading-spinner>
+    </ng-template>
+
 
     <div class="main">
       <div class="try-container" *ngFor="let try of tries; let i = index">

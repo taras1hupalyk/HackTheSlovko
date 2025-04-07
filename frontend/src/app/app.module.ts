@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { SlovkoComponent } from './slovko/slovko.component';
 import {CommonModule} from "@angular/common";
 import { WordlistComponent } from './wordlist/wordlist.component';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SlovkoComponent,
     WordlistComponent,
+    LoadingSpinnerComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 export interface WordInterface{
   id: number,
-  value: string
+  word: string,
+  entropy: number
 }

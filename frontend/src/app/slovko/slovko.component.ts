@@ -149,9 +149,9 @@ export class SlovkoComponent implements OnInit {
 
   printChosenWord(chosenWord: WordInterface) {
     console.log('chosen word is ' + chosenWord);
-    for(let i = 0; i < chosenWord.value.length; i++){
-      console.log(chosenWord.value[i])
-      this.setLetter(chosenWord.value[i]);
+    for(let i = 0; i < chosenWord.word.length; i++){
+      console.log(chosenWord.word[i])
+      this.setLetter(chosenWord.word[i]);
       this.currentLetterIndex++;
     }
   }

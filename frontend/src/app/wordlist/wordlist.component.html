@@ -3,7 +3,7 @@
     <li *ngFor="let word of words; let i = index">
       <button (click)="onWordChosen(word)">
         <span class="badge">{{i+1}}</span>
-        <span class="word">{{word.value}}</span>
+        <span class="word">{{word.word}}</span>
       </button>
     </li>
   </ul>

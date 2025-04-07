@@ -1,11 +1,19 @@
 /* HeroesComponent's private CSS styles */
+
+.wordlist{
+  border-color: #2c3a41;
+  border-width: 1px;
+}
+
 .words {
   margin: 0.8em 5em 2em 0;
   list-style-type: none;
   padding: 0;
   width: 15em;
+  min-width: 15em;
   max-height: 530px;
   overflow-y: auto;
+  
   li {
     display: flex;
   }
