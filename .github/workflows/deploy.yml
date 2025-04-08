@@ -22,7 +22,7 @@ jobs:
         run: echo BACKEND_HOST=${{ vars.BACKEND_PORT }} >> .env
         
       - name: check results
-        run: cat .env
+        run: ls ./Slovko.NL.Api
       
       - name: Start application-specific services using Docker Compose
         run: docker compose up -d
