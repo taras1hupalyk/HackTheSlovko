@@ -22,10 +22,12 @@ jobs:
 
       - name: set backend ip
         run: echo BACKEND_HOST=${{ vars.BACKEND_PORT }} >> .env
+        continue-on-error: false
         
       - name: check results
         run: cat  .env
-      
+        continue-on-error: false
+        
       - name: Start application-specific services using Docker Compose
-        run: docker compose up -d
+        run: docker compose up -d --build
         continue-on-error: false
