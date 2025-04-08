@@ -11,10 +11,12 @@ services:
     image: slvk_frontend
     build: 
       context: ./frontend
+      args:
+        - BACKEND_HOST=${BACKEND_HOST}
+        - BACKEND_PORT=${BACKEND_PORT}
     ports:
       - "80:80"
-    environment:
-      BACKEND_HOST: backend
-      BACKEND_PORT: 7075
+    env_file:
+      - .env
     depends_on:
       - backend
