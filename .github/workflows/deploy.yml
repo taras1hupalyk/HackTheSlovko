@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
+        with:
+          submodules: 'true'
         continue-on-error: false
         
       - name: set backend ip
@@ -22,7 +24,7 @@ jobs:
         run: echo BACKEND_HOST=${{ vars.BACKEND_PORT }} >> .env
         
       - name: check results
-        run: ls ./Slovko.NL.Api
+        run: cat  .env
       
       - name: Start application-specific services using Docker Compose
         run: docker compose up -d
