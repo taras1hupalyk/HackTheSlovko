@@ -19,11 +19,16 @@ jobs:
         
       - name: set backend ip
         run: echo BACKEND_HOST=${{ vars.BACKEND_HOST }} > .env
+        continue-on-error: false
 
-      - name: set backend ip
+      - name: set backend port
         run: echo BACKEND_PORT=${{ vars.BACKEND_PORT }} >> .env
         continue-on-error: false
-        
+
+      - name: set backend port
+        run: echo FRONTEND_PORT=${{ vars.FRONTEND_PORT }} >> .env
+        continue-on-error: false
+
       - name: check results
         run: cat  .env
         continue-on-error: false
