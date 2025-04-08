@@ -1,6 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {SlovkoService} from "../slovko.service";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {WordInterface} from "../types/word.interface";
 import { environment } from 'src/environments/environment';
 
@@ -38,9 +38,10 @@ enum LetterState {
 }
 
 @Component({
-  selector: 'app-slovko',
-  templateUrl: './slovko.component.html',
-  styleUrls: ['./slovko.component.scss']
+    selector: 'app-slovko',
+    templateUrl: './slovko.component.html',
+    styleUrls: ['./slovko.component.scss'],
+    standalone: false
 })
 export class SlovkoComponent implements OnInit {
   baseUrl = environment.baseUrl;
@@ -149,9 +150,9 @@ export class SlovkoComponent implements OnInit {
 
   printChosenWord(chosenWord: WordInterface) {
     console.log('chosen word is ' + chosenWord);
-    for(let i = 0; i < chosenWord.value.length; i++){
-      console.log(chosenWord.value[i])
-      this.setLetter(chosenWord.value[i]);
+    for(let i = 0; i < chosenWord.word.length; i++){
+      console.log(chosenWord.word[i])
+      this.setLetter(chosenWord.word[i]);
       this.currentLetterIndex++;
     }
   }

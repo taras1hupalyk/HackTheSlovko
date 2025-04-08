@@ -15,12 +15,20 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/hts",
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
+            "outputPath": "dist/hts"
+            ,
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -30,7 +38,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "main": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -55,9 +64,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -66,13 +73,13 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "hts:build:production"
+              "buildTarget": "hts:build:production"
             },
             "development": {
-              "browserTarget": "hts:build:development"
+              "buildTarget": "hts:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +87,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "hts:build"
+            "buildTarget": "hts:build"
           }
         },
         "test": {

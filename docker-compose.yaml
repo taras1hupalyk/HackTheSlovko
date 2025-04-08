@@ -1,0 +1,22 @@
+services:
+  backend:
+    image: slvk_backend
+    build: 
+      context: ./Slovko.NL.Api
+    ports:
+      - "7075:7075"
+    environment:
+     - ASPNETCORE_URLS=http://+:7075
+  frontend:
+    image: slvk_frontend
+    build: 
+      context: ./frontend
+      args:
+        - BACKEND_HOST=${BACKEND_HOST}
+        - BACKEND_PORT=${BACKEND_PORT}
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    depends_on:
+      - backend

@@ -2,9 +2,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {WordInterface} from "../types/word.interface";
 
 @Component({
-  selector: 'app-wordlist',
-  templateUrl: './wordlist.component.html',
-  styleUrls: ['./wordlist.component.scss']
+    selector: 'app-wordlist',
+    templateUrl: './wordlist.component.html',
+    styleUrls: ['./wordlist.component.scss'],
+    standalone: false
 })
 export class WordlistComponent implements OnInit {
 

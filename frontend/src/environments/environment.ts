@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://localhost:5000/api'
+  baseUrl: "http://" +  process.env["BACKEND_HOST"] + ":" + process.env["BACKEND_PORT"] + "/api"
   
 };
 
