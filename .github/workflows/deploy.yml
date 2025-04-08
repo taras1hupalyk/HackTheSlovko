@@ -19,11 +19,11 @@ jobs:
         run: echo BACKEND_HOST=$BACKEND_HOST > .env
 
       - name: set backend ip
-        run: echo BACKEND_HOST=$BACKEND_HOST >> .env
+        run: echo BACKEND_HOST=$BACKEND_PORT >> .env
         
       - name: check results
-        run: echo BACKEND_PORT=$BACKEND_PORT >> .env
+        run: cat .env
       
       - name: Start application-specific services using Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
         continue-on-error: false
