@@ -1,10 +1,21 @@
+declare const process:
+  | { env: Record<string, string | undefined> }
+  | undefined;
+
+const backendHost = typeof process !== 'undefined' && process.env["BACKEND_HOST"]
+  ? process.env["BACKEND_HOST"]
+  : "localhost";
+const backendPort = typeof process !== 'undefined' && process.env["BACKEND_PORT"]
+  ? process.env["BACKEND_PORT"]
+  : "7075";
+
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
   production: false,
-  baseUrl: "http://" +  process.env["BACKEND_HOST"] + ":" + process.env["BACKEND_PORT"] + "/api"
+  baseUrl: "http://" + backendHost + ":" + backendPort + "/api"
   
 };
 

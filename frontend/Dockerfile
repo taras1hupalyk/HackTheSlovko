@@ -1,4 +1,4 @@
-FROM node:22 as build
+FROM node:22 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -22,4 +22,3 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
-

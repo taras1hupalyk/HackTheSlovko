@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { of } from 'rxjs';
 
 import { SlovkoComponent } from './slovko.component';
+import { SlovkoService } from '../slovko.service';
 
 describe('SlovkoComponent', () => {
   let component: SlovkoComponent;
@@ -8,7 +11,17 @@ describe('SlovkoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SlovkoComponent ]
+      declarations: [ SlovkoComponent ],
+      providers: [
+        {
+          provide: SlovkoService,
+          useValue: {
+            getWords: () => of([]),
+            sendFilter: () => of([])
+          }
+        }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

@@ -1,8 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {SlovkoService} from "../slovko.service";
-import { HttpClient } from "@angular/common/http";
 import {WordInterface} from "../types/word.interface";
-import { environment } from 'src/environments/environment';
 
 const WORD_LENGTH = 5;
 const NUM_TRIES = 6;
@@ -14,7 +12,6 @@ const LETTERS = (() => {
   for (let a = 0; a< chars.length; a++){
     ret[chars[a]] = true;
   }
-  console.log(ret);
   return ret;
 })();
 
@@ -44,8 +41,8 @@ enum LetterState {
     standalone: false
 })
 export class SlovkoComponent implements OnInit {
-  baseUrl = environment.baseUrl;
   isDataLoaded :boolean = false;
+  errorMessage = '';
   words : WordInterface[] = []
   readonly tries: Try[] =[];
 
@@ -53,7 +50,7 @@ export class SlovkoComponent implements OnInit {
   private numSubmittedTries = 0;
   readonly LetterState = LetterState;
 
-  constructor( private http : HttpClient, private  slovkoService: SlovkoService) {
+  constructor(private slovkoService: SlovkoService) {
     for (let i = 0; i < NUM_TRIES; i++){
       const letters: Letter[]=[]
       for (let j = 0; j < WORD_LENGTH; j++){
@@ -71,14 +68,7 @@ export class SlovkoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get<WordInterface[]>(`${this.baseUrl}/words`)
-      .subscribe((data : WordInterface[]) => {
-        console.log('res', data)
-        this.words = data
-        this.isDataLoaded =true;
-      });
-
-    console.log('in on init' , this.words);
+    this.loadWords();
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -92,7 +82,6 @@ export class SlovkoComponent implements OnInit {
       if (this.currentLetterIndex < (this.numSubmittedTries + 1) * WORD_LENGTH){
         this.setLetter(key);
         this.currentLetterIndex++;
-        console.log(this.currentLetterIndex);
       }
     }
     else if(key === 'Backspace'){
@@ -112,48 +101,60 @@ export class SlovkoComponent implements OnInit {
   submitTry() {
     this.words = [];
     this.isDataLoaded = false;
+    this.errorMessage = '';
 
     if(this.numSubmittedTries < NUM_TRIES - 1) {
       this.numSubmittedTries++;
     }
-    console.log(this.numSubmittedTries );
-    let requestBody: Try[] = []
+    const requestBody: Try[] = []
     for(let i = 0; i < this.numSubmittedTries; i++){
       requestBody.push(this.tries[i]);
     }
 
-     this.slovkoService.SendFilter(requestBody).subscribe((response) =>{
-       this.words = response;
-      this.isDataLoaded = true;
+     this.slovkoService.sendFilter(requestBody).subscribe({
+       next: (response) =>{
+         this.words = response;
+         this.isDataLoaded = true;
+       },
+       error: () => {
+         this.errorMessage = 'Could not load matching words.';
+         this.isDataLoaded = true;
+       }
      });
 
   }
 
-  onLetterClick(event : any) {
-      console.log(event.target.id);
-      let chosenNumTry = event.target.id[0];
-      let chosenNumLetter = event.target.id[1];
-
-    function changeLetterState(state: number) {
-      if (state == 3){
-        return 0;
-      }
-      else {
-        return state + 1;
-      }
-    }
-
-    this.tries[chosenNumTry].letters[chosenNumLetter].state = changeLetterState(this.tries[chosenNumTry].letters[chosenNumLetter].state);
-    console.log(this.tries[chosenNumTry].letters[chosenNumLetter].state)
-    console.log(this.tries)
+  onLetterClick(tryIndex : number, letterIndex: number) {
+    const letter = this.tries[tryIndex].letters[letterIndex];
+    letter.state = letter.state === LetterState.PENDING
+      ? LetterState.WRONG
+      : letter.state + 1;
   }
 
   printChosenWord(chosenWord: WordInterface) {
-    console.log('chosen word is ' + chosenWord);
     for(let i = 0; i < chosenWord.word.length; i++){
-      console.log(chosenWord.word[i])
+      if (this.currentLetterIndex >= (this.numSubmittedTries + 1) * WORD_LENGTH) {
+        return;
+      }
+
       this.setLetter(chosenWord.word[i]);
       this.currentLetterIndex++;
     }
+  }
+
+  private loadWords() {
+    this.isDataLoaded = false;
+    this.errorMessage = '';
+
+    this.slovkoService.getWords().subscribe({
+      next: (data : WordInterface[]) => {
+        this.words = data;
+        this.isDataLoaded = true;
+      },
+      error: () => {
+        this.errorMessage = 'Could not load words.';
+        this.isDataLoaded = true;
+      }
+    });
   }
 }

@@ -8,7 +8,10 @@
 
   <div class="some">
     <div class="wordlist" style="border-color: black; border-width: 1px;">
-      <app-wordlist *ngIf="isDataLoaded; else loading_spinner" [words]="words"  (chosen)="printChosenWord($event)"  ></app-wordlist>
+      <div *ngIf="errorMessage; else words_or_spinner" class="error-message">{{ errorMessage }}</div>
+      <ng-template #words_or_spinner>
+        <app-wordlist *ngIf="isDataLoaded; else loading_spinner" [words]="words"  (chosen)="printChosenWord($event)"  ></app-wordlist>
+      </ng-template>
     </div>
     <ng-template #loading_spinner>
       <app-loading-spinner ></app-loading-spinner>
@@ -23,7 +26,7 @@
              [class.partial]="letter.state === LetterState.PARTIAL_MATCH"
              [class.wrong]="letter.state === LetterState.WRONG"
              [class.has-text]="letter.text !== ''"
-              (click)="onLetterClick($event)">
+              (click)="onLetterClick(i, j)">
           {{letter.text}}
         </div>
         <button type="submit"  class="btn_submit" (click)="submitTry()">ok</button>
